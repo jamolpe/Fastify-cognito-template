@@ -1,20 +1,20 @@
 import { RequestUuid } from '../../models/requester';
-import { Response } from 'express';
 import { CognitoAuth } from '../../core/auth/cognito';
 import logger from '../../helpers/logger';
 import { INTERNAL_SERVER_ERROR } from '../../models/constants';
+import { FastifyReply } from 'fastify';
 
 export class UserController {
   private cognito: CognitoAuth;
   constructor() {
     this.cognito = CognitoAuth.getInstance();
   }
-  async getUserInformation(req: RequestUuid, res: Response) {
+  async getUserInformation(req: RequestUuid, res: FastifyReply) {
     const { user } = req;
     return res.status(200).send(user);
   }
-  async modifyPassword(req: RequestUuid, res: Response) {
-    const { newPassword, oldPassword } = req.body;
+  async modifyPassword(req: RequestUuid, res: FastifyReply) {
+    const { newPassword, oldPassword } = <{ newPassword; oldPassword }>req.body;
     try {
       this.cognito.getCognitoSession().changePassword(
         {

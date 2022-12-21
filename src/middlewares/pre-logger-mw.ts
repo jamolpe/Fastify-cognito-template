@@ -8,17 +8,22 @@ const preLoggerMiddleware = (
   next
 ) => {
   if (
-    ['login', 'register', 'confirm-password', 'forgot-password', 'auth'].some(
-      (path) => request.url.includes(path)
-    )
+    [
+      'login',
+      'register',
+      'confirm-password',
+      'forgot-password',
+      'auth',
+      'api-docs'
+    ].some((path) => request.url.includes(path))
   ) {
     logger.info(
-      `request: ${request.uuid} ${request.method} ${request.path} body: secured`
+      `request: ${request.uuid} ${request.ip} ${request.method} ${request.url} body: secured`
     );
   } else {
     logger.info(
-      `request: ${request.uuid} ${request.method} ${
-        request.path
+      `request: ${request.uuid} ${request.ip} ${request.method} ${
+        request.url
       } body: ${JSON.stringify(request.body)}`
     );
   }

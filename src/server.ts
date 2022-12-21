@@ -1,87 +1,97 @@
-import dotenv from "dotenv";
-import * as pack from "../package.json";
+import dotenv from 'dotenv';
+import path from 'path';
+import fastify from 'fastify';
+import cookie from '@fastify/cookie';
+import autoload from '@fastify/autoload';
+import type { FastifyCookieOptions } from '@fastify/cookie';
 dotenv.config();
-import cors from "cors";
-import express from "express";
-import swaggerJSDoc from "swagger-jsdoc";
-import swaggerUi from "swagger-ui-express";
-import preLoggerMiddleware from "./middlewares/pre-logger-mw";
-import requestUuid from "./middlewares/uuid-mw";
-import { AuthRouter } from "./routes/public/auth-router";
-import errorMiddleware from "./middlewares/error-mw";
-import logger from "./helpers/logger";
-import timerMiddleware from "./middlewares/timer-mw";
-import postLoggerMiddleware from "./middlewares/post-logger-mw";
-import { Router } from "express";
-import { UserRouter } from "./routes/private/user-router";
-import cookieParser from "cookie-parser";
-import { Database } from "./services/database/database";
-import { AdminRouter } from "./routes/private/admin-router";
+import cors from 'cors';
+import preLoggerMiddleware from './middlewares/pre-logger-mw';
+import requestUuid from './middlewares/uuid-mw';
+import errorMiddleware from './middlewares/error-mw';
+import timerMiddleware from './middlewares/timer-mw';
+import postLoggerMiddleware from './middlewares/post-logger-mw';
+import { Database } from './services/database/database';
 
 export class Server {
-  public app: express.Application;
+  public app: any;
   constructor() {
-    this.app = express();
-    this.config();
+    this.app = fastify();
+  }
+
+  public async start() {
+    await this.config();
     this.routes();
-  }
-
-  public start(): void {
     this.postConfig(); // this MUST be here as is a post validator request
-    this.app.listen(process.env.PORT, () => {
-      logger.info(`Server started at PORT ${process.env.PORT}`);
-    });
+    this.app.listen({ port: 1337 });
   }
 
-  private config() {
-    this.app.use(express.json());
-    this.app.use(cookieParser());
-    this.app.use(express.urlencoded({ extended: true }));
+  private async config() {
+    await this.app.register(import('@fastify/express'));
     this.app.use(cors());
     this.app.use(requestUuid);
     this.app.use(timerMiddleware);
     this.app.use(preLoggerMiddleware);
     this.app.use(postLoggerMiddleware);
+    this.app.register(cookie, {
+      secret: process.env.COOKIE_KEY,
+      parseOptions: {}
+    } as FastifyCookieOptions);
+
     new Database().connect();
-    this.configureSwagger();
+    await this.configureSwagger();
   }
 
-  private configureSwagger() {
-    const swaggerDefinition = {
-      openapi: "3.0.0",
-      info: {
-        title: "Express API for agoradoc",
-        version: pack.version,
-      },
-    };
-    const options = {
-      swaggerDefinition,
-      // Paths to files containing OpenAPI definitions
-      apis: ["**/*.ts"],
-    };
-    const swaggerSpec = swaggerJSDoc(options);
-    this.app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  private async configureSwagger() {
+    await this.app.register(import('@fastify/swagger'), {
+      swagger: {
+        info: {
+          title: 'Fastify API',
+          description: 'Fastify API Template',
+          version: '0.1.0'
+        },
+        externalDocs: {
+          url: 'https://swagger.io',
+          description: 'Find more info here'
+        },
+        schemes: ['http'],
+        consumes: ['application/json'],
+        produces: ['application/json'],
+        tags: [
+          { name: 'Auth', description: 'Auth routes' },
+          { name: 'Public', description: 'Public routes' }
+        ]
+      }
+    });
+    await this.app.register(import('@fastify/swagger-ui'), {
+      routePrefix: '/api-docs'
+    });
   }
 
   private postConfig() {
     this.app.use(errorMiddleware);
   }
   private routes(): void {
-    const router = Router();
-    this.definePrivateRoutes(router);
-    this.definePublicRoutes(router);
-    this.app.use('/api', router);
+    this.definePrivateRoutes();
+    this.definePublicRoutes();
   }
 
-  private definePrivateRoutes(router: Router): void {
-    router.use("/user", new UserRouter().router);
-    router.use("/admin", new AdminRouter().router);
+  private definePrivateRoutes(): void {
+    this.app.register(autoload, {
+      dir: path.join(__dirname, 'routes/private')
+    });
   }
 
-  private definePublicRoutes(router: Router): void {
-    router.use("/auth", new AuthRouter().router);
+  private definePublicRoutes(): void {
+    this.app.register(autoload, {
+      dir: path.join(__dirname, 'routes/public')
+    });
   }
 }
 
-const server = new Server();
-server.start();
+try {
+  const server = new Server();
+  server.start();
+} catch (err) {
+  console.log(err);
+}

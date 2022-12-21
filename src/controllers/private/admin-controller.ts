@@ -1,4 +1,4 @@
-import { Response } from 'express';
+import { FastifyReply } from 'fastify';
 import { UserManagerCore } from '../../core/admin/usermanager-core';
 import logger from '../../helpers/logger';
 import { INTERNAL_SERVER_ERROR } from '../../models/constants';
@@ -10,7 +10,7 @@ export class AdminController {
     this.userManagerCore = new UserManagerCore();
   }
 
-  async listUsersInPool(req: RequestUuid, res: Response) {
+  async listUsersInPool(req: RequestUuid, res: FastifyReply) {
     try {
       const { result, error } = await this.userManagerCore.listAllUsers();
       if (result) {

@@ -18,12 +18,27 @@ const postLoggerMiddleware = (req: RequestUuid, res, next) => {
     }
     const body = Buffer.concat(chunks).toString('utf8');
     const now = new DateWorker();
-    const diference = now.diff(req.start, 'milliseconds');
-    logger.info(
-      `request: ${req.uuid} ${req.method} ${
-        req.path
-      } and response: ${JSON.stringify(body)} on: ${diference} milliseconds`
-    );
+    const difference = now.diff(req.start, 'milliseconds');
+    if (
+      [
+        'login',
+        'register',
+        'confirm-password',
+        'forgot-password',
+        'auth',
+        'api-docs'
+      ].some((path) => req.url.includes(path))
+    ) {
+      logger.info(
+        `request: ${req.uuid} ${req.ip} ${req.method} ${req.url} and response: NO DISPLAY on: ${difference} milliseconds`
+      );
+    } else {
+      logger.info(
+        `request: ${req.uuid} ${req.ip} ${req.method} ${
+          req.url
+        } and response: ${JSON.stringify(body)} on: ${difference} milliseconds`
+      );
+    }
 
     // console.log(body);
     oldEnd.apply(res, restArgs);
