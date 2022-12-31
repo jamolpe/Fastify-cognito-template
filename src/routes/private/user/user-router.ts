@@ -8,8 +8,9 @@ export = async function UserRoutes(fastify: FastifyInstance) {
   fastify.route({
     method: 'GET',
     url: '/info',
-    preHandler: (request, reply, next) =>
-      verifyUser(request, reply, next, ['freemium']),
+    preValidation: (request, reply, next) => {
+      verifyUser(request, reply, next, ['freemium']);
+    },
     async handler(request, reply) {
       await userController.getUserInformation(request, reply);
     },
@@ -25,8 +26,9 @@ export = async function UserRoutes(fastify: FastifyInstance) {
   fastify.route({
     method: 'POST',
     url: '/change-password',
-    preHandler: (request, reply, next) =>
-      verifyUser(request, reply, next, ['freemium']),
+    preValidation: (request, reply, next) => {
+      verifyUser(request, reply, next, ['freemium']);
+    },
     async handler(request, reply) {
       await userController.modifyPassword(request, reply);
     },

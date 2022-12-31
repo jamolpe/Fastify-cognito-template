@@ -20,7 +20,10 @@ export = async function AuthRoutes(fastify: FastifyInstance) {
           .prop('username', S.string())
           .prop('userConfirmed', S.string()),
         500: S.string(),
-        422: S.string()
+        422: S.object()
+          .prop('message', S.string())
+          .prop('code', S.string())
+          .prop('name', S.string())
       }
     }
   });
@@ -38,7 +41,10 @@ export = async function AuthRoutes(fastify: FastifyInstance) {
       response: {
         200: S.object(),
         500: S.string(),
-        422: S.string()
+        422: S.object()
+          .prop('message', S.string())
+          .prop('code', S.string())
+          .prop('name', S.string())
       }
     }
   });
@@ -56,7 +62,10 @@ export = async function AuthRoutes(fastify: FastifyInstance) {
       response: {
         200: S.string(),
         500: S.string(),
-        422: S.string(),
+        422: S.object()
+          .prop('message', S.string())
+          .prop('code', S.string())
+          .prop('name', S.string()),
         400: S.object()
       }
     }
@@ -73,7 +82,10 @@ export = async function AuthRoutes(fastify: FastifyInstance) {
       response: {
         204: S.object(),
         500: S.string(),
-        422: S.string(),
+        422: S.object()
+          .prop('message', S.string())
+          .prop('code', S.string())
+          .prop('name', S.string()),
         400: S.object()
       }
     }
@@ -93,7 +105,10 @@ export = async function AuthRoutes(fastify: FastifyInstance) {
       response: {
         200: S.object(),
         500: S.string(),
-        422: S.string(),
+        422: S.object()
+          .prop('message', S.string())
+          .prop('code', S.string())
+          .prop('name', S.string()),
         400: S.object()
       }
     }

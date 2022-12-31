@@ -8,8 +8,9 @@ export = async function UserRoutes(fastify: FastifyInstance) {
   fastify.route({
     method: 'GET',
     url: '/users',
-    preHandler: (request, reply, next) =>
-      verifyUser(request, reply, next, ['admin']),
+    preValidation: (request, reply, next) => {
+      verifyUser(request, reply, next, ['admin']);
+    },
     async handler(request, reply) {
       await adminController.listUsersInPool(request, reply);
     },
@@ -24,7 +25,10 @@ export = async function UserRoutes(fastify: FastifyInstance) {
             .prop('email_verified', S.boolean())
         ),
         500: S.string(),
-        422: S.string()
+        422: S.object()
+          .prop('message', S.string())
+          .prop('code', S.string())
+          .prop('name', S.string())
       }
     }
   });
