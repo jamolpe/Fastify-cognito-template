@@ -19,7 +19,10 @@ export = async function UserRoutes(fastify: FastifyInstance) {
       response: {
         200: S.object().prop('email', S.string()).prop('cognitoId', S.string()),
         500: S.string(),
-        422: S.string()
+        422: S.object()
+          .prop('message', S.string())
+          .prop('code', S.string())
+          .prop('name', S.string())
       }
     }
   });
@@ -40,7 +43,10 @@ export = async function UserRoutes(fastify: FastifyInstance) {
       response: {
         204: S.object(),
         500: S.string(),
-        422: S.string()
+        422: S.object()
+          .prop('message', S.string())
+          .prop('code', S.string())
+          .prop('name', S.string())
       }
     }
   });
