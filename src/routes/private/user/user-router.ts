@@ -11,7 +11,7 @@ export = async function UserRoutes(fastify: FastifyInstance) {
     preHandler: (request, reply, next) =>
       verifyUser(request, reply, next, ['freemium']),
     async handler(request, reply) {
-      userController.getUserInformation(request, reply);
+      await userController.getUserInformation(request, reply);
     },
     schema: {
       tags: ['User'],
@@ -28,7 +28,7 @@ export = async function UserRoutes(fastify: FastifyInstance) {
     preHandler: (request, reply, next) =>
       verifyUser(request, reply, next, ['freemium']),
     async handler(request, reply) {
-      userController.modifyPassword(request, reply);
+      await userController.modifyPassword(request, reply);
     },
     schema: {
       tags: ['User'],

@@ -8,7 +8,7 @@ export = async function AuthRoutes(fastify: FastifyInstance) {
     method: 'POST',
     url: '/register',
     async handler(request, reply) {
-      authController.register(request, reply);
+      await authController.register(request, reply);
     },
     schema: {
       tags: ['Auth'],
@@ -28,7 +28,7 @@ export = async function AuthRoutes(fastify: FastifyInstance) {
     method: 'POST',
     url: '/verify',
     async handler(request, reply) {
-      authController.verify(request, reply);
+      await authController.verify(request, reply);
     },
     schema: {
       tags: ['Auth'],
@@ -46,7 +46,7 @@ export = async function AuthRoutes(fastify: FastifyInstance) {
     method: 'POST',
     url: '/login',
     async handler(request, reply) {
-      authController.loginUser(request, reply);
+      await authController.loginUser(request, reply);
     },
     schema: {
       tags: ['Auth'],
@@ -65,7 +65,7 @@ export = async function AuthRoutes(fastify: FastifyInstance) {
     method: 'POST',
     url: '/forgot-password',
     async handler(request, reply) {
-      authController.forgotPassword(request, reply);
+      await authController.forgotPassword(request, reply);
     },
     schema: {
       tags: ['Auth'],
@@ -82,7 +82,7 @@ export = async function AuthRoutes(fastify: FastifyInstance) {
     method: 'POST',
     url: '/confirm-password',
     async handler(request, reply) {
-      authController.confirmPassword(request, reply);
+      await authController.confirmPassword(request, reply);
     },
     schema: {
       tags: ['Auth'],

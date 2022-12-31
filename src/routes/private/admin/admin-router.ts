@@ -11,7 +11,7 @@ export = async function UserRoutes(fastify: FastifyInstance) {
     preHandler: (request, reply, next) =>
       verifyUser(request, reply, next, ['admin']),
     async handler(request, reply) {
-      adminController.listUsersInPool(request, reply);
+      await adminController.listUsersInPool(request, reply);
     },
     schema: {
       tags: ['Admin'],
