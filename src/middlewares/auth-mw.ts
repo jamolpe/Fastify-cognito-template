@@ -48,7 +48,8 @@ export const verifyUser = async (
   roles?: string[]
 ) => {
   try {
-    if (process.env.ENV === 'LOCAL') {
+    if (process.env.ENV === 'LOCAL' &&
+      req.cookies['accessToken'] === 'accessToken_fakecookie') {
       req.user = { email: 'user@test.com', cognitoId: 'id1234' };
       return next();
     }

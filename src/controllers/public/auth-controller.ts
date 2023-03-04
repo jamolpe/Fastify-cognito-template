@@ -88,17 +88,28 @@ export class AuthController {
           refreshToken: result.getRefreshToken().getToken()
         };
         const decodedIdCode = this.cognito.decodeJWTIdToken(token.idToken);
-
         res.cookie('idToken', token.idToken, {
-          expires: new Date(result.getIdToken().getExpiration() * 1000)
+          expires: new Date(result.getIdToken().getExpiration() * 1000),
+          path: '/',
+          httpOnly: true,
+          secure: true,
+          sameSite: 'strict'
         });
         res.cookie('accessToken', token.accessToken, {
-          expires: new Date(result.getAccessToken().getExpiration() * 1000)
+          expires: new Date(result.getAccessToken().getExpiration() * 1000),
+          path: '/',
+          httpOnly: true,
+          secure: true,
+          sameSite: 'strict'
         });
         const refreshData = new Date();
         refreshData.setDate(refreshData.getDate() + 30);
         res.cookie('refreshToken', token.refreshToken, {
-          expires: refreshData
+          expires: refreshData,
+          path: '/',
+          httpOnly: true,
+          secure: true,
+          sameSite: 'strict'
         });
         return res.status(200).send(decodedIdCode);
       },
@@ -116,17 +127,29 @@ export class AuthController {
         return this.loginWithLogout(cognitoUser, authDetails, true, res);
       } else {
         res.setCookie('idToken', 'idToken_fakecookie', {
-          expires: new Date(new Date().getTime() + 60 * 60 * 1000)
+          expires: new Date(new Date().getTime() + 60 * 60 * 1000),
+          path: '/',
+          httpOnly: true,
+          secure: true,
+          sameSite: 'strict'
         });
         res.setCookie('accessToken', 'accessToken_fakecookie', {
-          expires: new Date(new Date().getTime() + 60 * 60 * 1000)
+          expires: new Date(new Date().getTime() + 60 * 60 * 1000),
+          path: '/',
+          httpOnly: true,
+          secure: true,
+          sameSite: 'strict'
         });
         const refreshData = new Date();
         refreshData.setDate(refreshData.getDate() + 30);
         res.setCookie('refreshToken', 'refreshToken_fakecookie', {
-          expires: refreshData
+          expires: refreshData,
+          path: '/',
+          httpOnly: true,
+          secure: true,
+          sameSite: 'strict'
         });
-        return res.status(200).send('IdCode');
+        return res.status(200).send({ IdCode: 'IdCode' });
       }
     } catch (error) {
       logger.error(`[loginUser] error: ${(error as Error).message}`);
